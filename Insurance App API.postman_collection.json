@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "b1ec2b07-56ac-4f2b-a248-9c1f87d8a794",
+		"name": "Insurance App API",
+		"description": "Parameterized collection with JWT authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "21538687"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"name\": \"Test Client\",\n  \"contactMethodeType\": \"{{contactMethodType}}\",\n  \"contactMethodeValue\": \"{{contactMethodValue}}\",\n  \"password\": \"{{password}}\"\n}"
+						},
+						"url": "{{baseUrl}}/api/v1/auth/newUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate (Get JWT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var token = pm.response.text();",
+									"pm.environment.set(\"jwtToken\", token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"contactMethodeType\": \"{{contactMethodType}}\",\n  \"contactMethodeValue\": \"{{contactMethodValue}}\",\n  \"password\": \"{{password}}\"\n}"
+						},
+						"url": "{{baseUrl}}/api/v1/auth/authenticate"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/product/v1/products?clientId={{clientId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product",
+								"v1",
+								"products"
+							],
+							"query": [
+								{
+									"key": "clientId",
+									"value": "{{clientId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"productId\": \"PROD-001\",\n  \"price\": 100.0,\n  \"effectiveDate\": \"2025-01-01\",\n  \"expirationDate\": \"2026-01-01\"\n}"
+						},
+						"url": "{{baseUrl}}/product/v1/products/add"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": \"PROD-001\",\n  \"name\": \"Updated Product\",\n  \"price\": 120.0\n}"
+						},
+						"url": "{{baseUrl}}/product/v1/products/update/{{clientId}}"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
