@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 @Repository
 public class StorageService {
-    private static final Logger log = LoggerFactory.getLogger(ManageProductApplicationService.class);
+    private static final Logger log = LoggerFactory.getLogger(StorageService.class);
     private final HashMap<String, ClientInfo> clientsMap ;
     private final HashMap<String, ProductInfo> productsMap ;
     private final HashMap<String, List<ProductInfo>> clientsProductsMap ;
@@ -43,12 +43,12 @@ public class StorageService {
     }
     private void initiateProductMap(){
         log.info("ProductMap created");
-        productsMap.put("123",new ProductInfo("123","kids insurance", "full cover", LocalDateTime.now(), LocalDateTime.now(), 200.0));
-        productsMap.put("124",new ProductInfo("124","adult insurance", "full cover", LocalDateTime.now(), LocalDateTime.now(), 200.0)) ;
-        productsMap.put("125",new ProductInfo("125","flight insurance", "full cover", LocalDateTime.now(), LocalDateTime.now(), 200.0));
-        productsMap.put("127",new ProductInfo("126","extreme insurance", "full cover", LocalDateTime.now(), LocalDateTime.now(), 200.0));
-        productsMap.put("128",new ProductInfo("127","extreme  flight insurance", "full cover", LocalDateTime.now(), LocalDateTime.now(), 200.0));
-        productsMap.put("129",new ProductInfo("128","extreme car insurance", "full cover", LocalDateTime.now(), LocalDateTime.now(), 200.0));
+        productsMap.put("123",new ProductInfo("123","kids insurance", "full cover", LocalDateTime.now(), LocalDateTime.now().plusYears(1), 200.0));
+        productsMap.put("124",new ProductInfo("124","adult insurance", "full cover", LocalDateTime.now(), LocalDateTime.now().plusYears(1), 200.0)) ;
+        productsMap.put("125",new ProductInfo("125","flight insurance", "full cover", LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), 200.0));
+        productsMap.put("126",new ProductInfo("126","extreme insurance", "full cover", LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), 200.0));
+        productsMap.put("128",new ProductInfo("127","extreme  flight insurance", "full cover", LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), 200.0));
+        productsMap.put("129",new ProductInfo("128","extreme car insurance", "full cover", LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), 200.0));
 
 
 

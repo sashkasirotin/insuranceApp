@@ -1,0 +1,395 @@
+---
+openapi: 3.0.1
+info:
+  title: Insurance Application API
+  description: |
+    API for client authentication and insurance product management.
+
+    Authentication is based on:
+    - clientId
+    - contactMethodType
+    - contactMethodValue
+    - password
+
+    Secured endpoints require a JWT Bearer token.
+  contact:
+    name: Insurance Platform Team
+    email: support@insurance.com
+  version: '1.0'
+servers:
+  - url: http://localhost:8081
+    description: Generated server url
+security:
+  - bearerAuth: []
+tags:
+  - name: Authentication
+    description: Client authentication and registration
+  - name: Products
+    description: Product management operations
+paths:
+  "/product/v1/products/update/{clientId}":
+    put:
+      tags:
+        - Products
+      summary: Update product
+      description: Update an existing product for a specific client
+      operationId: updateProducts
+      parameters:
+        - name: clientId
+          in: path
+          description: Client ID
+          required: true
+          schema:
+            type: string
+          example: 1234
+      requestBody:
+        description: Product to update
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProductInfo"
+        required: true
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiResponseListProductInfo"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: Access Denied - Cannot update another client's data
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: Client not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/product/v1/products/add":
+    post:
+      tags:
+        - Products
+      summary: Add (buy) new product
+      description: Create a new product order for a client
+      operationId: addProducts
+      requestBody:
+        description: Order information
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderInfo"
+        required: true
+      responses:
+        '200':
+          description: Product added successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiResponseProductListResponse"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: Access Denied - Cannot modify another client's data
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiError"
+  "/api/v1/auth/newUser":
+    post:
+      tags:
+        - Authentication
+      summary: Register new client
+      description: Register a new client in the system
+      operationId: addNewUser
+      requestBody:
+        description: Client information
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ClientInfo"
+        required: true
+      responses:
+        '200':
+          description: Client registered successfully
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ClientInfo"
+        '400':
+          description: Invalid input
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '409':
+          description: User already exists
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal server error
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v1/auth/authenticate":
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate client
+      description: Authenticate client using ID, contact method and password. Returns
+        JWT.
+      operationId: authenticateAndGetToken
+      requestBody:
+        description: Authentication request
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AuthenticationRequest"
+        required: true
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            "*/*":
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Invalid input
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '401':
+          description: Unauthorized
+          content:
+            "*/*":
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '403':
+          description: Invalid credentials
+          content:
+            "*/*":
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Server error
+          content:
+            "*/*":
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  "/product/v1/products":
+    get:
+      tags:
+        - Products
+      summary: Get products
+      description: Retrieve products for a client. If clientId is omitted, returns
+        all products.
+      operationId: getProducts
+      parameters:
+        - name: clientId
+          in: query
+          description: Client ID
+          required: true
+          schema:
+            type: string
+          example: 1234
+      responses:
+        '200':
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiResponseListProductInfo"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: Access Denied - Cannot access another client's data
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: Client not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ProductInfo:
+      type: object
+      properties:
+        productId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        effectiveDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    ApiResponseListProductInfo:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ProductInfo"
+        errorCode:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    OrderInfo:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int32
+        clientId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        products:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: PRODUCT_NOT_FOUND
+        message:
+          type: string
+          example: 'Product not found: 123'
+        timestamp:
+          type: string
+          format: date-time
+      description: Standard error response
+    ApiResponseProductListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          "$ref": "#/components/schemas/ProductListResponse"
+        errorCode:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    ProductListResponse:
+      type: object
+      properties:
+        customerId:
+          type: string
+        products:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/ProductInfo"
+    ClientInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+        contactMethodeType:
+          type: string
+        contactMethodeValue:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+    AuthenticationRequest:
+      type: object
+      properties:
+        clientId:
+          type: string
+        contactMethodeType:
+          type: string
+        contactMethodeValue:
+          type: string
+        password:
+          type: string
+        username:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      name: bearerAuth
+      scheme: bearer
+      bearerFormat: JWT

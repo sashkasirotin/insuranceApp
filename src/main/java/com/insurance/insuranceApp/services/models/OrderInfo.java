@@ -8,9 +8,9 @@ public class OrderInfo {
     private String clientId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private List<String> products;
+    private Set<String> products;
 
-    public OrderInfo(List<String> products) {
+    public OrderInfo(Set <String> products) {
         this.products = products;
     }
 
@@ -33,7 +33,7 @@ public class OrderInfo {
         this.clientId = clientId;
     }
 
-    public OrderInfo(List<String> products, LocalDateTime endDate, LocalDateTime startDate, String clientId, int orderId) {
+    public OrderInfo(Set<String> products, LocalDateTime endDate, LocalDateTime startDate, String clientId, int orderId) {
         this.products = products;
         this.endDate = endDate;
         this.startDate = startDate;
@@ -57,7 +57,7 @@ public class OrderInfo {
         this.endDate = endDate;
     }
 
-    public List<String> getProducts() {
+    public Set<String> getProducts() {
         return products;
     }
 
