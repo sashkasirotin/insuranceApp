@@ -101,7 +101,9 @@ public class ManageProductApplicationService {
     public  List<ProductInfo> getCustomerProductList(String clientId){
         HashMap<String, ProductInfo> products=storageService.getProductsMap();
         HashMap<String, List<ProductInfo>> clientsProductsMap=storageService.getClientsProductsMap() ;
-
+        if(clientId==null){
+            return products.values().stream().toList();
+        }
         if(clientsProductsMap.containsKey(clientId)){
             return clientsProductsMap.get(clientId);
         }

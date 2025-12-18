@@ -218,7 +218,7 @@ paths:
         - name: clientId
           in: query
           description: Client ID
-          required: true
+          required: false
           schema:
             type: string
           example: 1234

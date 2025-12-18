@@ -67,9 +67,9 @@ public class ProductController {
             @Parameter(
                     description = "Client ID",
                     example = "1234",
-                    required = true
+                    required = false
             )
-            @RequestParam(required = true) String clientId,
+            @RequestParam(required = false) String clientId,
             Authentication authentication
     ) {
         String authenticatedClientId = authentication.getName();
